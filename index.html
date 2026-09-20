@@ -5,6 +5,11 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#075643">
 <meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Suivi remorques">
+<link rel="apple-touch-icon" sizes="180x180" href="./Ic%C3%B4ne%20de%20suivi%20remorque.png?v=4">
+<link rel="apple-touch-icon-precomposed" sizes="180x180" href="./Ic%C3%B4ne%20de%20suivi%20remorque.png?v=4">
+<link rel="icon" type="image/png" href="./Ic%C3%B4ne%20de%20suivi%20remorque.png?v=4">
 <title>Suivi des remorques V5</title>
 <style>
 :root{--g:#18a05e;--o:#f59e0b;--r:#dc2626;--k:#171717;--b:#075643;--bg:#f3f7f5;--line:#d6e3dd;--muted:#667085}
@@ -29,11 +34,11 @@
 <dialog id="dup"><div class="modal"><h3>Doublon possible</h3><p id="dupText"></p><div class="grid2"><button id="dupNo" class="secondary">Annuler</button><button id="dupYes" class="primary">2e remorque</button></div></div></dialog>
 <dialog id="detail"><div class="modal"><h3 id="detailTitle"></h3><div id="detailBody"></div><button id="closeDetail" class="primary" style="margin-top:9px">Fermer</button></div></dialog>
 <script>
-const KEY='suiviRemorquesV5',OLD_KEYS=['suiviRemorquesV4','suiviRemorquesV3','suiviRemorquesV2'];
+const KEY='suiviRemorquesV6',OLD_KEYS=['suiviRemorquesV5','suiviRemorquesV4','suiviRemorquesV3','suiviRemorquesV2'];
 const DEFAULTS={entries:[],suppliers:[],hours:['06:30','07:00','08:00','09:00','10:30','13:00','15:00'],tolerance:15};
 let db=load(),monday=getMonday(new Date()),monthCursor=new Date(new Date().getFullYear(),new Date().getMonth(),1),pending=null,otherMode=false;
 const $=id=>document.getElementById(id),$$=q=>[...document.querySelectorAll(q)];
-function load(){try{let raw=localStorage.getItem(KEY);if(!raw){for(const k of OLD_KEYS){if(localStorage.getItem(k)){raw=localStorage.getItem(k);break}}}return{...DEFAULTS,...JSON.parse(raw||'{}'),suppliers:JSON.parse(raw||'{}').suppliers||[]}}catch{return structuredClone(DEFAULTS)}}
+function load(){try{const current=localStorage.getItem(KEY);if(current)return{...DEFAULTS,...JSON.parse(current)};let previous={};for(const k of OLD_KEYS){const raw=localStorage.getItem(k);if(raw){previous=JSON.parse(raw);break}}const migrated={...DEFAULTS,...previous,suppliers:[]};localStorage.setItem(KEY,JSON.stringify(migrated));return migrated}catch{return structuredClone(DEFAULTS)}}
 function persist(){localStorage.setItem(KEY,JSON.stringify(db))}
 function iso(d=new Date()){return new Date(d.getTime()-d.getTimezoneOffset()*60000).toISOString().slice(0,10)}
 function getMonday(d){d=new Date(d);d.setHours(12,0,0,0);d.setDate(d.getDate()-(d.getDay()+6)%7);return d}
